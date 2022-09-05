@@ -39,24 +39,12 @@ sequelize
   )
   .then((jane) => {
     console.log("Usuario creado con exito", jane.dataValues);
-    Users.update(
-      { firstName: "Jorge" },
-      {
-        where: {
-          lastName: "Paez",
-        },
-      }
-    )
-      .then(() => {
-        console.log("El usuario se actualizo con exito");
-      })
-      .then(() => {
-        Users.findAll({
-          where: {
-            firstName: "Jorge",
-          },
-        }).then((user) => {
-          console.log("El usuario es: ", JSON.stringify(user, null, 4));
-        });
-      });
+    Users.destroy({
+      where: {
+        //Elimina el usuario creado respecto a su id
+        firstName: jane.dataValues.id,
+      },
+    }).then(() => {
+      console.log("Elimine Registro ", jane.dataValues);
+    });
   });
