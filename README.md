@@ -26,17 +26,17 @@ Para poder ejecutar las peticiones debe contar con el header `jwt-token`.
 El cual lo puede solicitar a través de este endpoint
 
 ```bash
-http://localhost:3001/jwt/user/generateToken
+http://localhost:3001/jwt/generateToken
 ```
 
 > Recuerde que este token tiene una validez de 30 min. Pasado este tiempo debe volver a generarlo.
 
-![image](https://user-images.githubusercontent.com/62823762/193470952-e8e96b35-f2e8-4586-8ba6-359d008004f7.png)
+![image](https://user-images.githubusercontent.com/62823762/193472921-d22c338c-36e4-4fdd-8e7e-4e800e5c7b77.png)
 
 - También puede consultar la validéz del token mediante este endpoint:
 
 ```bash
-http://localhost:3001/jwt/user/validateToken
+http://localhost:3001/jwt/validateToken
 ```
 
 ![image](https://user-images.githubusercontent.com/62823762/193471779-a2493d34-3084-4787-ab69-95165f7afa93.png)
