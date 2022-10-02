@@ -31,7 +31,7 @@ http://localhost:3001/jwt/generateToken
 
 > Recuerde que este token tiene una validez de 30 min. Pasado este tiempo debe volver a generarlo.
 
-![image](https://user-images.githubusercontent.com/62823762/193472921-d22c338c-36e4-4fdd-8e7e-4e800e5c7b77.png)
+![image](https://user-images.githubusercontent.com/62823762/193472973-a5f52e24-2c07-437a-9424-c582bca814f4.png)
 
 - También puede consultar la validéz del token mediante este endpoint:
 
