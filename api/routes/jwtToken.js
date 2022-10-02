@@ -5,17 +5,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 router.post("/user/generateToken", (req, res) => {
-  // Validate User Here
-  // Then generate JWT Token
-
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
-  let data = {
-    time: Date(),
-    userId: 12,
-  };
-
-  const token = jwt.sign(data, jwtSecretKey);
-
+  const token = generateAccessToken();
   res.send(token);
 });
 
@@ -41,5 +31,17 @@ router.get("/user/validateToken", (req, res) => {
     return res.status(401).send(error);
   }
 });
+
+// Validate User Here
+// Then generate JWT Token
+function generateAccessToken() {
+  let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  let data = {
+    time: Date(),
+    userId: 1,
+  };
+
+  return jwt.sign(data, jwtSecretKey, { expiresIn: "30m" });
+}
 
 module.exports = router;

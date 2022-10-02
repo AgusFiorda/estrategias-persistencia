@@ -8,7 +8,6 @@ var materiasRouter = require("./routes/materias");
 var profesorRouter = require("./routes/profesor");
 var jwtTokenRouter = require("./routes/jwtToken");
 
-
 var app = express();
 
 // view engine setup
@@ -24,7 +23,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/car", carrerasRouter);
 app.use("/mat", materiasRouter);
 app.use("/prof", profesorRouter);
-app.use("/jwt",jwtTokenRouter);
+app.use("/jwt", jwtTokenRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

@@ -1,8 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var validarToken = require("../shared/verifyToken");
 
-router.get("/", (req, res, next) => {
+router.get("/", validarToken, (req, res, next) => {
   models.profesor
     .findAll({
       attributes: ["id", "nombre", "apellido", "dni"],
@@ -23,7 +24,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res) => {
+router.post("/", validarToken, (req, res) => {
   models.profesor
     .create({
       nombre: req.body.nombre,
@@ -54,7 +55,7 @@ const findProfe = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validarToken, (req, res) => {
   findProfe(req.params.id, {
     onSuccess: (profe) => res.send(profe),
     onNotFound: () => res.sendStatus(404),
@@ -62,7 +63,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validarToken, (req, res) => {
   const onSuccess = (profe) =>
     profe
       .update(
@@ -89,7 +90,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validarToken, (req, res) => {
   const onSuccess = (profe) =>
     profe
       .destroy()
