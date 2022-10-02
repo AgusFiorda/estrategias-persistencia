@@ -1,8 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var validarToken = require("../shared/verifyToken");
 
-router.get("/", (req, res, next) => {
+router.get("/", validarToken, (req, res, next) => {
   models.materia
     .findAll({
       attributes: ["id", "nombre", "id_carrera"],
@@ -23,7 +24,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res) => {
+router.post("/", validarToken, (req, res) => {
   models.materia
     .create({ nombre: req.body.nombre, id_carrera: req.body.id_carrera })
     .then((materia) => res.status(201).send({ id: materia.id }))
@@ -49,7 +50,7 @@ const findmateria = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validarToken, (req, res) => {
   findmateria(req.params.id, {
     onSuccess: (materia) => res.send(materia),
     onNotFound: () => res.sendStatus(404),
@@ -57,7 +58,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validarToken, (req, res) => {
   const onSuccess = (materia) =>
     materia
       .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
@@ -81,7 +82,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validarToken, (req, res) => {
   const onSuccess = (materia) =>
     materia
       .destroy()
