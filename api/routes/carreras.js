@@ -2,13 +2,22 @@ var express = require("express");
 var router = express.Router();
 var models = require("../models");
 var validarToken = require("../shared/verifyToken");
+var { getPagination, getPagingData } = require("../shared/pagination");
 
 router.get("/", validarToken, (req, res) => {
+  const { page, size } = req.query;
+  const { limit, offset } = getPagination(page, size);
+
   models.carrera
-    .findAll({
+    .findAndCountAll({
       attributes: ["id", "nombre"],
+      limit,
+      offset,
     })
-    .then((carreras) => res.send(carreras))
+    .then((carreras) => {
+      const response = getPagingData(carreras, page, limit);
+      res.send(response);
+    })
     .catch(() => res.sendStatus(500));
 });
 

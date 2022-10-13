@@ -26,7 +26,6 @@ router.get("/", validarToken, (req, res, next) => {
     })
     .then((materias) => {
       const response = getPagingData(materias, page, limit);
-
       res.send(response);
     })
     .catch((error) => {

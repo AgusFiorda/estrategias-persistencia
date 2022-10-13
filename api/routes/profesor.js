@@ -2,10 +2,14 @@ var express = require("express");
 var router = express.Router();
 var models = require("../models");
 var validarToken = require("../shared/verifyToken");
+var { getPagination, getPagingData } = require("../shared/pagination");
 
 router.get("/", validarToken, (req, res, next) => {
+  const { page, size } = req.query;
+  const { limit, offset } = getPagination(page, size);
+
   models.profesor
-    .findAll({
+    .findAndCountAll({
       attributes: ["id", "nombre", "apellido", "dni"],
 
       /////////se agrega la asociacion
@@ -17,8 +21,13 @@ router.get("/", validarToken, (req, res, next) => {
         },
       ],
       ////////////////////////////////
+      limit,
+      offset,
     })
-    .then((profes) => res.send(profes))
+    .then((profes) => {
+      const response = getPagingData(profes, page, limit);
+      res.send(response);
+    })
     .catch((error) => {
       return next(error);
     });
