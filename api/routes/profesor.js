@@ -1,10 +1,15 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var validarToken = require("../shared/verifyToken");
+var { getPagination, getPagingData } = require("../shared/pagination");
 
-router.get("/", (req, res, next) => {
+router.get("/", validarToken, (req, res, next) => {
+  const { page, size } = req.query;
+  const { limit, offset } = getPagination(page, size);
+
   models.profesor
-    .findAll({
+    .findAndCountAll({
       attributes: ["id", "nombre", "apellido", "dni"],
 
       /////////se agrega la asociacion
@@ -16,14 +21,19 @@ router.get("/", (req, res, next) => {
         },
       ],
       ////////////////////////////////
+      limit,
+      offset,
     })
-    .then((profes) => res.send(profes))
+    .then((profes) => {
+      const response = getPagingData(profes, page, limit);
+      res.send(response);
+    })
     .catch((error) => {
       return next(error);
     });
 });
 
-router.post("/", (req, res) => {
+router.post("/", validarToken, (req, res) => {
   models.profesor
     .create({
       nombre: req.body.nombre,
@@ -54,7 +64,7 @@ const findProfe = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validarToken, (req, res) => {
   findProfe(req.params.id, {
     onSuccess: (profe) => res.send(profe),
     onNotFound: () => res.sendStatus(404),
@@ -62,12 +72,17 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validarToken, (req, res) => {
   const onSuccess = (profe) =>
     profe
       .update(
-        { nombre: req.body.nombre, apellido: req.body.apellido },
-        { fields: ["nombre", "apellido"] }
+        {
+          nombre: req.body.nombre,
+          apellido: req.body.apellido,
+          dni: req.body.dni,
+          id_materia: req.body.id_materia,
+        },
+        { fields: ["nombre", "apellido", "dni", "id_materia"] }
       )
       .then(() => res.sendStatus(200))
       .catch((error) => {
@@ -89,7 +104,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validarToken, (req, res) => {
   const onSuccess = (profe) =>
     profe
       .destroy()

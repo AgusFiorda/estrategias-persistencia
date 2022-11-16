@@ -1,10 +1,15 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var validarToken = require("../shared/verifyToken");
+var { getPagination, getPagingData } = require("../shared/pagination");
 
-router.get("/", (req, res, next) => {
+router.get("/", validarToken, (req, res, next) => {
+  const { page, size } = req.query;
+  const { limit, offset } = getPagination(page, size);
+
   models.materia
-    .findAll({
+    .findAndCountAll({
       attributes: ["id", "nombre", "id_carrera"],
 
       /////////se agrega la asociacion
@@ -16,14 +21,19 @@ router.get("/", (req, res, next) => {
         },
       ],
       ////////////////////////////////
+      limit,
+      offset,
     })
-    .then((materias) => res.send(materias))
+    .then((materias) => {
+      const response = getPagingData(materias, page, limit);
+      res.send(response);
+    })
     .catch((error) => {
       return next(error);
     });
 });
 
-router.post("/", (req, res) => {
+router.post("/", validarToken, (req, res) => {
   models.materia
     .create({ nombre: req.body.nombre, id_carrera: req.body.id_carrera })
     .then((materia) => res.status(201).send({ id: materia.id }))
@@ -49,7 +59,7 @@ const findmateria = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validarToken, (req, res) => {
   findmateria(req.params.id, {
     onSuccess: (materia) => res.send(materia),
     onNotFound: () => res.sendStatus(404),
@@ -57,10 +67,13 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validarToken, (req, res) => {
   const onSuccess = (materia) =>
     materia
-      .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
+      .update(
+        { nombre: req.body.nombre, id_carrera: req.body.id_carrera },
+        { fields: ["nombre", "id_carrera"] }
+      )
       .then(() => res.sendStatus(200))
       .catch((error) => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {
@@ -81,7 +94,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validarToken, (req, res) => {
   const onSuccess = (materia) =>
     materia
       .destroy()
