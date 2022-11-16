@@ -76,8 +76,13 @@ router.put("/:id", validarToken, (req, res) => {
   const onSuccess = (profe) =>
     profe
       .update(
-        { nombre: req.body.nombre, apellido: req.body.apellido },
-        { fields: ["nombre", "apellido"] }
+        {
+          nombre: req.body.nombre,
+          apellido: req.body.apellido,
+          dni: req.body.dni,
+          id_materia: req.body.id_materia,
+        },
+        { fields: ["nombre", "apellido", "dni", "id_materia"] }
       )
       .then(() => res.sendStatus(200))
       .catch((error) => {
